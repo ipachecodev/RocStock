@@ -5,6 +5,7 @@ RocStock is a C++ console application for managing product inventory. It tracks 
 ## Features
 
 - Add products with unique codes, categories, units, and stock limits.
+- Edit a product's name, category, unit, and stock limits while keeping its unique code and quantity.
 - Record stock entries and withdrawals.
 - View low-stock and out-of-stock alerts.
 - Generate a shopping list based on target stock levels.

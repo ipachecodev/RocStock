@@ -19,6 +19,13 @@ public:
     // Returns the matching product, or nullptr if it does not exist.
     const Product* findProduct(const std::string& code) const;
     
+    bool updateProduct(const std::string& code,
+                       const std::string& newName,
+                       const std::string& newCategory,
+                       const std::string& newUnit,
+                       int newMinimumStock,
+                       int newTargetStock);
+    
     // Changes the quantity of an existing product.
     // Returns false if the code or amount is invalid
     bool recordEntry(const std::string& code, int amount);

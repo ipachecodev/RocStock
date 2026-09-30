@@ -61,6 +61,7 @@ void showMenu(Language language)
     std::cout << translate(language, "5. View alerts\n", "5. Ver alertas\n");
     std::cout << translate(language, "6. Shopping list\n", "6. Lista de compra\n");
     std::cout << translate(language, "7. Change language\n", "7. Cambiar idioma\n");
+    std::cout << translate(language, "8. Edit product\n", "8. Editar producto\n");
     std::cout << translate(language, "0. Exit\n", "0. Salir\n");
     std::cout << translate(language, "Choose an option: ", "Selecciona una opcion: ");
 }
@@ -321,7 +322,52 @@ void viewShoppingList(const Inventory& inventory, Language language)
     }
 }
 
-
+bool editProduct(Inventory& inventory, Language language)
+{
+    std::string code;
+    std::cout << translate(language, "Product code to edit: ", "Código del producto a editar: ");
+    
+    if (!std::getline(std::cin, code)) return false;
+    
+    const Product* product = inventory.findProduct(code);
+    
+    if (product == nullptr)
+    {
+        std::cout << translate(language, "Product not found.\n", "Producto no encontrado.\n");
+        
+        return false;
+    }
+    
+    std::string newName;
+    std::cout << translate(language, "New product name: ", "Nuevo nombre del producto: ");
+    
+    if (!std::getline(std::cin, newName)) return false;
+    
+    std::string newCategory;
+    std::cout << translate(language, "New category (optional): ", "Nueva categoría (opcional): ");
+    
+    if (!std::getline(std::cin, newCategory)) return false;
+    
+    std::string newUnit;
+    std::cout << translate(language, "New unit (pieces, boxes, etc.): ", "Nueva unidad (piezas, cajas, etc.): ");
+    
+    if (!std::getline(std::cin, newUnit)) return false;
+    
+    int newMinimumStock;
+    
+    if(!readNonNegativeInt(language, "New minimum stock: ", "Nuevo inventario mínimo: ", newMinimumStock)) return false;
+    
+    int newTargetStock;
+    
+    if(!readNonNegativeInt(language, "New target stock: ", "Nuevo inventario objetivo: ", newTargetStock)) return false;
+    
+    if (newName.empty() || newUnit.empty() ||  newTargetStock < newMinimumStock)
+    {
+        std::cout << translate(language, "Invalid product details.\n", "Datos del producto no válidos.\n"); return false;
+    }
+    
+    return inventory.updateProduct(code, newName, newCategory, newUnit, newMinimumStock, newTargetStock);
+}
 
 int main ()
 {
@@ -439,6 +485,19 @@ int main ()
         else if (input == "6")
         {
             viewShoppingList(inventory, language);
+        }
+        
+        else if (input == "8")
+        {
+            if (editProduct(inventory, language))
+            {
+                std::cout << translate(language, "Product updated.\n", "Producto actualizado.\n");
+                
+                if (!inventory.saveToFile(dataFile))
+                {
+                    std::cerr << translate(language, "Could not save the inventory.\n", "No se pudo guardar el inventario.\n");
+                }
+            }
         }
         
         else

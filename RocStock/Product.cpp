@@ -67,6 +67,27 @@ int Product::getTargetStock() const
     return targetStock;
 }
 
+bool Product::updateDetails(const std::string& newName,
+                            const std::string& newCategory,
+                            const std::string& newUnit,
+                            int newMinimumStock,
+                            int newTargetStock)
+
+{
+if (newName.empty() || newUnit.empty() || newMinimumStock < 0 || newTargetStock < newMinimumStock)
+{
+    return false;
+}
+
+    name = newName;
+    category = newCategory;
+    unit = newUnit;
+    minimumStock = newMinimumStock;
+    targetStock = newTargetStock;
+
+    return true;
+}
+
 bool Product::addStock(int amount)
 {
     // Reject zero, negative amounts, and numbers that would overflow int.

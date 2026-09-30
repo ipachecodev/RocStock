@@ -32,6 +32,24 @@ const Product* Inventory::findProduct(const std::string &code) const
     return nullptr;
 }
 
+bool Inventory::updateProduct(const std::string &code,
+                              const std::string &newName,
+                              const std::string &newCategory,
+                              const std::string &newUnit,
+                              int newMinimumStock,
+                              int newTargetStock)
+{
+for (Product& product : products)
+{
+    if (product.getCode() == code)
+    {
+        return product.updateDetails(newName, newCategory, newUnit, newMinimumStock, newTargetStock);
+    }
+}
+
+    return false;
+}
+
 bool Inventory::recordEntry(const std::string &code, int amount)
 {
     // Use a non-const reference because the quantity will change.

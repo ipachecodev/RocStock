@@ -32,6 +32,12 @@ public:
     int getMinimumStock() const;
     int getTargetStock() const;
     
+    bool updateDetails(const std::string& newName,
+                       const std::string& newCategory,
+                       const std::string& newUnit,
+                       int newMinimumStock,
+                       int newTargetStock);
+    
     bool addStock(int amount);
     bool removeStock(int amount);
     bool isOutOfStock() const;
