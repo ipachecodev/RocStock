@@ -62,7 +62,8 @@ void showMenu(Language language)
     std::cout << translate(language, "6. Shopping list\n", "6. Lista de compra\n");
     std::cout << translate(language, "7. Change language\n", "7. Cambiar idioma\n");
     std::cout << translate(language, "8. Edit product\n", "8. Editar producto\n");
-    std::cout << translate(language, "9. Delete product\n", "9. Eliminar producto.\n");
+    std::cout << translate(language, "9. Delete product\n", "9. Eliminar producto\n");
+    std::cout << translate(language, "10. Search product\n", "10. Buscar producto\n");
     std::cout << translate(language, "0. Exit\n", "0. Salir\n");
     std::cout << translate(language, "Choose an option: ", "Selecciona una opcion: ");
 }
@@ -401,6 +402,51 @@ bool deleteProduct(Inventory& inventory, Language language)
     return inventory.removeProduct(code);
 }
 
+void searchProduct(const Inventory& inventory, Language language)
+{
+    std::string code;
+    std::cout << translate(language, "Producto code to search: ", "Código del producto a buscar: ");
+    std::getline(std::cin, code);
+    
+    const Product* product = inventory.findProduct(code);
+    
+    if (product == nullptr)
+    {
+        std::cout << translate(language, "Product not found.\n", "Producto no encontrado.\n");
+        return;
+    }
+    
+    std::cout << "\n[" << product->getCode() << "] " << product->getName() << '\n';
+    
+    if (!product->getCategory().empty())
+    {
+        std::cout << translate(language, "Category: ", "Categoría: ") << product->getCategory() << '\n';
+    }
+    
+    std::cout << translate(language, "Available: ", "Disponible: ") << product->getQuantity() << ' ' << product->getUnit() << '\n';
+    
+    std::cout << translate(language, "Minimum: ", "Mínimo: ") << product->getMinimumStock() << '\n';
+    
+    std::cout << translate(language, "Target: ", "Objetivo: ") << product->getTargetStock() << '\n';
+    
+    std::cout << translate(language, "Status: ", "Estado: ");
+    
+    if (product->isOutOfStock())
+    {
+        std::cout << translate(language, "OUT OF STOCK\n", "AGOTADO\n");
+    }
+    
+    else if (product->isLowStock())
+    {
+        std::cout << translate(language, "LOW STOCK\n", "INVENTARIO BAJO\n");
+    }
+    
+    else
+    {
+        std::cout << translate(language, "AVAILABLE\n", "DISPONIBLE\n");
+    }
+}
+
 int main ()
 {
     Language language;
@@ -543,6 +589,11 @@ int main ()
                     std::cerr << translate(language, "Could not save the inventory.\n", "No se pudo guardar el inventario.\n");
                 }
             }
+        }
+        
+        else if (input == "10")
+        {
+            searchProduct(inventory, language);
         }
         
         else

@@ -12,6 +12,7 @@ RocStock is a C++ console application for managing product inventory. It tracks 
 - Switch the interface between English and Spanish.
 - Save inventory automatically between sessions.
 - Delete a product by code after confirming the selection.
+- Search for a product by its unique code.
 
 ## Getting started
 
