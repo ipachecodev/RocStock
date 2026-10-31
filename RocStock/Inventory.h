@@ -26,6 +26,8 @@ public:
                        int newMinimumStock,
                        int newTargetStock);
     
+    bool removeProduct(const std::string& code);
+    
     // Changes the quantity of an existing product.
     // Returns false if the code or amount is invalid
     bool recordEntry(const std::string& code, int amount);

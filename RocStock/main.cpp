@@ -62,6 +62,7 @@ void showMenu(Language language)
     std::cout << translate(language, "6. Shopping list\n", "6. Lista de compra\n");
     std::cout << translate(language, "7. Change language\n", "7. Cambiar idioma\n");
     std::cout << translate(language, "8. Edit product\n", "8. Editar producto\n");
+    std::cout << translate(language, "9. Delete product\n", "9. Eliminar producto.\n");
     std::cout << translate(language, "0. Exit\n", "0. Salir\n");
     std::cout << translate(language, "Choose an option: ", "Selecciona una opcion: ");
 }
@@ -369,6 +370,37 @@ bool editProduct(Inventory& inventory, Language language)
     return inventory.updateProduct(code, newName, newCategory, newUnit, newMinimumStock, newTargetStock);
 }
 
+bool deleteProduct(Inventory& inventory, Language language)
+{
+    std::string code;
+    std::cout << translate(language, "Product code to delete: ", "Código del producto a eliminar: ");
+    
+    if (!std::getline(std::cin, code)) return false;
+    
+    const Product* product = inventory.findProduct(code);
+    
+    if(product == nullptr)
+    {
+        std::cout << translate(language, "Prduct not found.\n", "Producto no encontrado.\n"); return false;
+    }
+    
+    std::cout << translate(language, "Selected product: ", "Producto seleccionado: ") << "[" << product->getCode() << "] " << product->getName() << " (" << product->getQuantity() << ' ' << product->getUnit() << ")\n";
+    
+    std::string confirmation;
+    std::cout << translate(language, "Type YES to delete this product: ", "Escribe SI para eliminar este producto: ");
+    
+    if (!std::getline(std::cin, confirmation)) return false;
+    
+    if (confirmation != (language == Language::English ? "YES" : "SI"))
+    {
+        std::cout << translate(language, "Deletion cancelled.\n", "Eliminación cancelada.\n");
+        
+        return false;
+    }
+    
+    return inventory.removeProduct(code);
+}
+
 int main ()
 {
     Language language;
@@ -492,6 +524,19 @@ int main ()
             if (editProduct(inventory, language))
             {
                 std::cout << translate(language, "Product updated.\n", "Producto actualizado.\n");
+                
+                if (!inventory.saveToFile(dataFile))
+                {
+                    std::cerr << translate(language, "Could not save the inventory.\n", "No se pudo guardar el inventario.\n");
+                }
+            }
+        }
+        
+        else if (input == "9")
+        {
+            if (deleteProduct(inventory, language))
+            {
+                std::cout << translate(language, "Product deleted.\n", "Producto eliminado.\n");
                 
                 if (!inventory.saveToFile(dataFile))
                 {

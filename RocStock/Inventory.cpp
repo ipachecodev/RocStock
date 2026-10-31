@@ -50,6 +50,20 @@ for (Product& product : products)
     return false;
 }
 
+bool Inventory::removeProduct(const std::string &code)
+{
+    for (auto it = products.begin(); it != products.end(); ++it)
+    {
+        if (it->getCode() == code)
+        {
+            products.erase(it);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 bool Inventory::recordEntry(const std::string &code, int amount)
 {
     // Use a non-const reference because the quantity will change.
