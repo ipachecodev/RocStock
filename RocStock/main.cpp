@@ -5,6 +5,7 @@
 #include <string>
 #include <filesystem>
 #include <cstdlib>
+#include <fstream>
 
 enum class Language
 {
@@ -64,6 +65,7 @@ void showMenu(Language language)
     std::cout << translate(language, "8. Edit product\n", "8. Editar producto\n");
     std::cout << translate(language, "9. Delete product\n", "9. Eliminar producto\n");
     std::cout << translate(language, "10. Search product\n", "10. Buscar producto\n");
+    std::cout << translate(language, "11. Export inventory to CSV\n", "11. Exportar inventario a CSV\n");
     std::cout << translate(language, "0. Exit\n", "0. Salir\n");
     std::cout << translate(language, "Choose an option: ", "Selecciona una opcion: ");
 }
@@ -447,6 +449,59 @@ void searchProduct(const Inventory& inventory, Language language)
     }
 }
 
+std::string csvField(const std::string& value)
+{
+    std::string result = "\"";
+    for (char character : value)
+    {
+        if (character == '"') result += "\"\"";
+        else result += character;
+    }
+    return result + "\"";
+}
+
+void exportInventory(const Inventory& inventory, Language language)
+{
+    const char* homeDirectory = std::getenv("HOME");
+    if (homeDirectory == nullptr)
+    {
+        std::cout << translate(language, "Cannot locate your home folder.\n", "No se pudo localizar tu carpeta de usuario.\n");
+        return;
+    }
+    
+    const std::string filePath = std::string(homeDirectory) + "/Documents/RocStock_Inventory.csv";
+    
+    std::ofstream output(filePath);
+    if (!output)
+    {
+        std::cerr << translate(language, "Could not create the CSV file.\n", "No se pudo crear el archivo CSV.\n");
+        return;
+    }
+    
+    output << "\xEF\xBB\xBF";
+    output << "Code,Name,Category,Unit,Quantity,Minimum,Target\n";
+    
+    for (const Product& product : inventory.getProducts())
+    {
+        output << csvField(product.getCode()) << ','
+               << csvField(product.getName()) << ','
+               << csvField(product.getCategory()) << ','
+               << csvField(product.getUnit()) << ','
+               << product.getQuantity() << ','
+               << product.getMinimumStock() << ','
+               << product.getTargetStock() << '\n';
+    }
+    
+    output.close();
+    if (!output)
+    {
+        std::cout << translate(language, "Could not finish writing the CSV file.\n", "No se pudo terminar de escribir el archivo CSV.\n");
+        return;
+    }
+    
+    std::cout << translate(language, "Inventory exported to: ", "Inventario exportado a: ") << filePath << '\n';
+}
+
 int main ()
 {
     Language language;
@@ -596,6 +651,11 @@ int main ()
             searchProduct(inventory, language);
         }
         
+        else if (input == "11")
+        {
+            exportInventory(inventory, language);
+        }
+        
         else
         {
             std::cout << translate(language, "Invalid option. Try again.\n", "Opción no válida. Intenta de nuevo.\n");
@@ -604,3 +664,4 @@ int main ()
     
     return 0;
 }
+
